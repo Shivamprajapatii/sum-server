@@ -90,7 +90,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
-  res.send("Hello from sum-server Zaptoz");
+  res.send("Hello from sum-server Sameer");
 })
 
 app.listen(8000, () => {
