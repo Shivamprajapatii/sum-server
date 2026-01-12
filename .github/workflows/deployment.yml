@@ -1,4 +1,4 @@
-name: Deploy to EC2 (PROD with Rollback)
+name: Deploy to EC2 (PROD)
 
 on:
   push:
@@ -13,44 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Deploy with rollback support
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
+          port: 22
           script: |
-            set -e
-
             cd /opt/applications/sum-server
-
-            echo "Saving current commit for rollback"
-            PREV_COMMIT=$(git rev-parse HEAD)
-
-            echo "Pulling new code"
             git pull origin main
             npm install
-
-            echo "Reloading app"
             pm2 reload ecosystem.config.js --env production
-            sleep 5
-
-            echo "Running health check"
-            if ! curl -f http://localhost:8000/health; then
-              echo "❌ Health check failed — rolling back"
-              git reset --hard $PREV_COMMIT
-              npm install
-              pm2 reload ecosystem.config.js --env production
-              exit 1
-            fi
-
-            echo "✅ Deployment successful"
             pm2 save
