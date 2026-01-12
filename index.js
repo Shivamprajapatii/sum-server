@@ -85,6 +85,10 @@ app.get("/notifications", (req, res) => {
 
 })
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.listen(8000, () => {
   console.log("app is listining on port 8080");
 })
