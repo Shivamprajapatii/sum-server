@@ -89,6 +89,10 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
+app.get("/hello", (req, res) => {
+  res.send("Hello from sum-server");
+})
+
 app.listen(8000, () => {
   console.log("app is listining on port 8080");
 })
